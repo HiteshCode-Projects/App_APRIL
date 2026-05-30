@@ -14,6 +14,16 @@ class BankAccount {
     print("Cureent Balance : $balance");
   }
   //WithDraw
+     void withdraw(double amount) {
+    if (amount <= balance) {
+      balance = balance - amount;
+      print("Rs $amount withdrawn successfully");
+      print("Current Balance : $balance");
+    } else {
+      print("Insufficient funds. Current Balance : $balance");
+    }
+  }
+
 
   //Check Balance
   void checkBalance() {
