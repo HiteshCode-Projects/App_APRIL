@@ -2,6 +2,8 @@
 
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'home_screen.dart';
 
 class AuthScreen extends StatefulWidget {
   @override
@@ -17,29 +19,60 @@ class _AuthScreenState extends State<AuthScreen> {
 
   final auth = FirebaseAuth.instance;
 
+  //Database Firestore Service
+  final firestore = FirebaseFirestore.instance;
+
   //sign up
   void signUp() async {
     try {
-      await auth.createUserWithEmailAndPassword(
+      UserCredential user = await auth.createUserWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
-      print("User Created");
+
+      //Save The Data of user in Firestore
+      await firestore.collection('user').doc(user.user!.uid).set({
+        'email': emailController.text,
+        'createdAt': Timestamp.now(),
+      });
+
+      // ScaffoldMessenger.of(
+      //   context,
+      // ).showSnackBar(SnackBar(content: Text("User Created Successfully")));
+      // }
+
+      Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen()));
     } catch (e) {
-      print(e);
+      // print(e);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
     }
   }
 
   //Login
-    void login() async {
+  void login() async {
     try {
       await auth.signInWithEmailAndPassword(
         email: emailController.text,
         password: passwordController.text,
       );
-      print("User Logged In");
-    } catch (e) {
-      print(e);
+      // print("User Logged In");
+
+     Navigator.push(context, MaterialPageRoute(builder: (_) => HomeScreen()));
+
+
+      // ScaffoldMessenger.of(
+      //   context,
+      // ).showSnackBar(SnackBar(content: Text("Login Successfull")));
+    } 
+    
+    catch (e) {
+      //  print(e);
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(e.toString())));
+      //snackbar
     }
   }
 
